@@ -1,5 +1,6 @@
 import { useState } from "react";
-const API_USERS_ENDPOINT = "https://api.artic.edu/api/v1/artworks/search/";
+import { z } from "zod/v4";
+const API_USERS_ENDPOINT = "https://api.artic.edu/api/v1/artworks/search";
 
 const Search = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -15,6 +16,25 @@ const Search = () => {
     searchApi(searchTerm);
   };
 
+  const ArtSchema = z.object({
+    api_link: z.url(),
+    api_model: z.string(),
+    id: z.number().int(),
+    is_boosted: z.boolean(),
+    thumbnail: z.object({
+      alt_text: z.string(),
+      height: z.number(),
+      lqip: z.url(),
+      width: z.number(),
+    }),
+    //timestamp: z.iso.datetime(),
+    title: z.string().min(1),
+    _score: z.number(),
+  });
+
+  //type Art = z.infer<typeof ArtSchema>;
+  const Arts = z.array(ArtSchema);
+
   const searchApi = async (searchTerm: string) => {
     try {
       const res = await fetch(API_USERS_ENDPOINT + "?q=" + searchTerm, {
@@ -25,10 +45,16 @@ const Search = () => {
       });
       if (!res.ok) throw new Error("Fetch failed");
 
-      const data = await res.json();
+      const resData = await res.json();
+      const { data, error, success } = Arts.safeParse(resData.data);
+      if (!success) throw new Error(z.prettifyError(error));
       console.log(data);
-    } catch {
-      console.log("error");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error("Could not display Art:", error.message);
+      } else {
+        console.log("Something went wrong");
+      }
     }
   };
 
