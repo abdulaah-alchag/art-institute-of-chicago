@@ -1,6 +1,39 @@
+import { useState } from "react";
+const API_USERS_ENDPOINT = "https://api.artic.edu/api/v1/artworks/search/";
+
 const Search = () => {
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log(searchTerm);
+    console.log(typeof searchTerm);
+    searchApi(searchTerm);
+  };
+
+  const searchApi = async (searchTerm: string) => {
+    try {
+      const res = await fetch(API_USERS_ENDPOINT + "?q=" + searchTerm, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (!res.ok) throw new Error("Fetch failed");
+
+      const data = await res.json();
+      console.log(data);
+    } catch {
+      console.log("error");
+    }
+  };
+
   return (
-    <form className="max-w-md mx-auto mt-8">
+    <form className="max-w-md mx-auto mt-8" onSubmit={handleSubmit}>
       <label htmlFor="search" className="sr-only">
         Search
       </label>
@@ -31,6 +64,8 @@ const Search = () => {
           placeholder="Search artworks..."
           className="block w-full rounded-md border border-gray-300 bg-white py-2.5 pl-9 pr-20 text-sm text-gray-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 outline-none"
           required
+          onChange={handleChange}
+          value={searchTerm}
         />
 
         {/* Button */}
