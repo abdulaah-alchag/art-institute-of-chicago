@@ -7,6 +7,7 @@ function App() {
     <Routes>
       <Route path="/" element={<Mainlayout />}>
         <Route index element={<Search />} />
+        {/* <Route element= {<List/>} */}
       </Route>
     </Routes>
   );
