@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { z } from "zod/v4";
-import Card from "./Card";
+import Card from "../components/Card";
 import { ArtSchema, type Art } from "../schemas/ArtSchema";
 const API_USERS_ENDPOINT = "https://api.artic.edu/api/v1/artworks/search";
 

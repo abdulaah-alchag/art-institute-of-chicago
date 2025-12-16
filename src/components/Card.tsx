@@ -1,20 +1,54 @@
 import { Link } from "react-router";
 import type { Art } from "../schemas/ArtSchema";
+import { useState } from "react";
 
-type CardProps = {
-  art: Art;
-};
-
+type CardProps = { art: Art };
+// art obj in CardPropsEinfacher zu verstehen
 const Card = ({ art }: CardProps) => {
-  const { api_link, api_model, thumbnail, title } = art;
+  //const Card = ({ art }) => {
+  //
+  const { api_link, api_model, thumbnail, title, id } = art;
 
+  const [img, setImg] = useState<string>("");
+
+  const imgApi = async () => {
+    try {
+      const res = await fetch(
+        "https://api.artic.edu/api/v1/artworks/" +
+          id +
+          "?fields=id,title,image_id",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (!res.ok) throw new Error("Fetch failed");
+
+      const resData = await res.json();
+      const data = resData.data;
+      console.log(data.id);
+      console.log(data.image_id);
+      setImg(data.image_id);
+      console.log(data.title);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error("Could not display Art:", error.message);
+      } else {
+        console.log("Something went wrong");
+      }
+    }
+  };
+  imgApi();
   return (
     <Link
       to={api_link}
       className="block bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition transform hover:-translate-y-1"
     >
       <img
-        src={thumbnail.lqip}
+        src={`https://www.artic.edu/iiif/2/${img}/full/843,/0/default.jpg`}
+        //src={`https://www.artic.edu/iiif/2/2d484387-2509-5e8e-2c43-22f9981972eb/full/843,/0/default.jpg`}
         alt={thumbnail.alt_text}
         className="w-full h-48 object-cover"
       />

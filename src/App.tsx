@@ -1,6 +1,6 @@
 import { Routes, Route } from "react-router";
 import Mainlayout from "./components/Mainlayout";
-import Search from "./components/Search";
+import Search from "./pages/Search";
 
 function App() {
   return (
