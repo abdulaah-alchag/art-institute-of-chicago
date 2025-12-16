@@ -1,7 +1,11 @@
 import { useState } from "react";
-// import { data } from "react-router";
 import { z } from "zod/v4";
+import Card from "./Card";
+import { ArtSchema, type Art } from "../schemas/ArtSchema";
 const API_USERS_ENDPOINT = "https://api.artic.edu/api/v1/artworks/search";
+
+// Konnte nicht aus dieser Setie Schema exportieren
+// Nutzen wir Zentraliert Schema
 
 const Search = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -19,24 +23,8 @@ const Search = () => {
     console.log(samer);
   };
 
-  const ArtSchema = z.object({
-    api_link: z.url(),
-    api_model: z.string(),
-    id: z.number().int(),
-    is_boosted: z.boolean(),
-    thumbnail: z.object({
-      alt_text: z.string(),
-      height: z.number(),
-      lqip: z.url(),
-      width: z.number(),
-    }),
-    //timestamp: z.iso.datetime(),
-    title: z.string().min(1),
-    _score: z.number(),
-  });
-
-  type Art = z.infer<typeof ArtSchema>;
   const Arts = z.array(ArtSchema);
+  // Nutzung ArtSChema in Array fur später resData.data
 
   const searchApi = async (searchTerm: string) => {
     try {
@@ -114,11 +102,11 @@ const Search = () => {
       {artworks.length === 0 ? (
         <p className="text-gray-500 text-lg">Noch keine Einträge vorhanden.</p>
       ) : (
-        <ul>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {artworks.map((art: Art) => (
-            <li key={art.id}>{art.title}</li>
+            <Card key={art.id} art={art} />
           ))}
-        </ul>
+        </div>
       )}
     </>
   );
