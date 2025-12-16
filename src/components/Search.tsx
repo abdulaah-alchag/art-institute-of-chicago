@@ -111,11 +111,15 @@ const Search = () => {
           </button>
         </div>
       </form>
-      <ul>
-        {artworks.map((art: Art) => (
-          <li key={art.id}>{art.title}</li>
-        ))}
-      </ul>
+      {artworks.length === 0 ? (
+        <p className="text-gray-500 text-lg">Noch keine Einträge vorhanden.</p>
+      ) : (
+        <ul>
+          {artworks.map((art: Art) => (
+            <li key={art.id}>{art.title}</li>
+          ))}
+        </ul>
+      )}
     </>
   );
 };
