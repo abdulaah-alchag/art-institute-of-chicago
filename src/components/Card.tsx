@@ -1,6 +1,8 @@
 import { Link } from "react-router";
 import type { Art } from "../schemas/ArtSchema";
 import { useState } from "react";
+import { ImgSchema, type Image } from "../schemas/ImgSchema";
+import { z } from "zod/v4";
 
 type CardProps = { art: Art };
 // art obj in CardPropsEinfacher zu verstehen
@@ -27,11 +29,21 @@ const Card = ({ art }: CardProps) => {
       if (!res.ok) throw new Error("Fetch failed");
 
       const resData = await res.json();
-      const data = resData.data;
-      console.log(data.id);
-      console.log(data.image_id);
-      setImg(data.image_id);
-      console.log(data.title);
+      // const data = resData.data;
+      // console.log(data.id);
+      // console.log(data.image_id);
+      // console.log(data.title);
+      const img: Image = {
+        id: resData.data.id,
+        image_id: resData.data.image_id,
+        title: resData.data.title,
+      };
+      // console.log(img);
+      setImg(img.image_id);
+
+      const { data, error, success } = ImgSchema.safeParse(resData.data);
+      if (!success) throw new Error(z.prettifyError(error));
+      return data;
     } catch (error: unknown) {
       if (error instanceof Error) {
         console.error("Could not display Art:", error.message);
